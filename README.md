@@ -1,0 +1,2 @@
+# WaterSortPuzzleSolver
+Solves WaterSortPuzzle games
