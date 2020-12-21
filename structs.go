@@ -120,6 +120,24 @@ func (v *Vial) PourInto(o *Vial) {
 	}
 }
 
+func (l *Level) Valid() bool {
+	var counts = map[Color]int{}
+	for _, vial := range l.Vials {
+		if !vial.Valid() {
+			return false
+		}
+		for i := 0; i < 4; i++ {
+			counts[vial[i]]++
+		}
+	}
+	for _, v := range counts {
+		if v%4 != 0 {
+			return false
+		}
+	}
+	return true
+}
+
 var levelHashSeed = maphash.MakeSeed()
 
 func (l *Level) HashCode() uint64 {
@@ -143,4 +161,13 @@ func (l *Level) DeepCopy() (copy *Level) {
 		copy.Vials[i] = vial
 	}
 	return
+}
+
+func (l *Level) Solved() bool {
+	for _, vial := range l.Vials {
+		if !vial.Finished() && vial.SpaceLeft() != 4 {
+			return false
+		}
+	}
+	return true
 }
