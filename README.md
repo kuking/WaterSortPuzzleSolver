@@ -15,9 +15,6 @@ Solution is a trivial exhaustive search, details:
 - reasonably fast for v1, about 3µs per move (~350k moves/sec single-core), it will find instantly one solution; 
   it can take a couple of minutes to find the shortest solution for some levels.
 
-Further improvements:
-- Don't move a vial with just one color into an empty one (it would end up being the same problem)
-
 Comments:
 - It can search the shortest solution, but it is usually not worth the extra time, it takes longer and the greedy
   algorithm usually finds a similar solution with maybe one extra move.
