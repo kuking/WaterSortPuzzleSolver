@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"hash/maphash"
 )
 
@@ -25,7 +26,8 @@ const (
 type Vial [4]Color
 
 type Level struct {
-	Vials []Vial
+	Size  int
+	Vials [20]Vial
 }
 
 func (v *Vial) Valid() bool {
@@ -122,12 +124,12 @@ func (v *Vial) PourInto(o *Vial) {
 
 func (l *Level) Valid() bool {
 	var counts = map[Color]int{}
-	for _, vial := range l.Vials {
-		if !vial.Valid() {
+	for i := 0; i < l.Size; i++ {
+		if !l.Vials[i].Valid() {
 			return false
 		}
-		for i := 0; i < 4; i++ {
-			counts[vial[i]]++
+		for j := 0; j < 4; j++ {
+			counts[l.Vials[i][j]]++
 		}
 	}
 	for _, v := range counts {
@@ -143,9 +145,9 @@ var levelHashSeed = maphash.MakeSeed()
 func (l *Level) HashCode() uint64 {
 	var h maphash.Hash
 	h.SetSeed(levelHashSeed)
-	for _, vial := range l.Vials {
-		for i := 0; i < len(vial); i++ {
-			if h.WriteByte(byte(vial[i])) != nil {
+	for i := 0; i < l.Size; i++ {
+		for j := 0; j < len(l.Vials[i]); j++ {
+			if h.WriteByte(byte(l.Vials[i][j])) != nil {
 				panic("Couldn't calculate hash")
 			}
 		}
@@ -153,9 +155,20 @@ func (l *Level) HashCode() uint64 {
 	return h.Sum64()
 }
 
+func BuildLevel(vials []Vial) (l Level) {
+	l = Level{
+		Size:  len(vials),
+		Vials: [20]Vial{},
+	}
+	for i, vial := range vials {
+		l.Vials[i] = vial
+	}
+	return
+}
+
 func (l *Level) DeepCopy() (copy *Level) {
 	copy = &Level{
-		Vials: make([]Vial, len(l.Vials)),
+		Size: l.Size,
 	}
 	for i, vial := range l.Vials {
 		copy.Vials[i] = vial
@@ -164,10 +177,24 @@ func (l *Level) DeepCopy() (copy *Level) {
 }
 
 func (l *Level) Solved() bool {
-	for _, vial := range l.Vials {
-		if !vial.Finished() && vial.SpaceLeft() != 4 {
+	for i := 0; i < l.Size; i++ {
+		if !l.Vials[i].Finished() && l.Vials[i].SpaceLeft() != 4 {
 			return false
 		}
 	}
 	return true
+}
+
+var hexes = []rune{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'}
+
+func (l *Level) String() string {
+	res := fmt.Sprintf("{s: %2d", l.Size)
+	for i := 0; i < l.Size; i++ {
+		res += " "
+		for j := 0; j < len(l.Vials[i]); j++ {
+			res += string(hexes[int(l.Vials[i][j])])
+		}
+	}
+	res += "}"
+	return res
 }

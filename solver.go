@@ -61,13 +61,13 @@ func (l *Level) solveRecurse(ss *SolvingState) (solution [][2]int) {
 				d.Truncate(time.Millisecond),
 				(d / time.Duration(ss.moves)).Truncate(time.Nanosecond),
 				ss.depth,
-				*l)
+				l)
 		}
 		runtime.GC()
 	}
 	var best *[][2]int
-	for i := 0; i < len(l.Vials); i++ {
-		for j := i + 1; j < len(l.Vials); j++ {
+	for i := 0; i < l.Size; i++ {
+		for j := i + 1; j < l.Size; j++ {
 			// left->right: i->j
 			sol := l.exploreMove(ss, i, j)
 			if sol != nil && (best == nil || len(*best) > len(*sol)) {

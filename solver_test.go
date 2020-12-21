@@ -5,10 +5,10 @@ import "testing"
 // I am not expecting to implement complex solving tests, but a couple just to verify it returns data in correct format
 func TestLevel_Solve(t *testing.T) {
 
-	var level = Level{Vials: []Vial{
+	var level = BuildLevel([]Vial{
 		{AIR, AIR, BROWN, BROWN},
 		{AIR, AIR, BROWN, BROWN},
-	}}
+	})
 
 	sol := level.Solve(false, false)
 	if len(sol) != 1 ||
@@ -17,7 +17,7 @@ func TestLevel_Solve(t *testing.T) {
 	}
 }
 
-var forBenchmark = Level{Vials: []Vial{
+var forBenchmark = BuildLevel([]Vial{
 	{VIOLET, RED, BGREEN, PINK},
 	{PINK, LGREEN, DBLUE, DBLUE},
 	{DBLUE, LBLUE, LBLUE, GRAY},
@@ -29,7 +29,7 @@ var forBenchmark = Level{Vials: []Vial{
 	{VIOLET, DBLUE, LBLUE, LBLUE},
 	{AIR, AIR, AIR, AIR},
 	{AIR, AIR, AIR, AIR},
-}}
+})
 
 func BenchmarkLevel_Solve(b *testing.B) {
 

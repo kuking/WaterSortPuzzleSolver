@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-var Level105 = Level{Vials: []Vial{
+var Level105 = BuildLevel([]Vial{
 	{DBLUE, DGREEN, LBLUE, LBLUE},
 	{VIOLET, PINK, LGREEN, GRAY},
 	{ORANGE, VIOLET, RED, BROWN},
@@ -17,9 +17,9 @@ var Level105 = Level{Vials: []Vial{
 	{LGREEN, LBLUE, PINK, ORANGE},
 	{AIR, AIR, AIR, AIR},
 	{AIR, AIR, AIR, AIR},
-}}
+})
 
-var Level106 = Level{Vials: []Vial{
+var Level106 = BuildLevel([]Vial{
 	{VIOLET, RED, BGREEN, PINK},
 	{PINK, LGREEN, DBLUE, DBLUE},
 	{DBLUE, LBLUE, LBLUE, GRAY},
@@ -31,9 +31,9 @@ var Level106 = Level{Vials: []Vial{
 	{VIOLET, DBLUE, LBLUE, LBLUE},
 	{AIR, AIR, AIR, AIR},
 	{AIR, AIR, AIR, AIR},
-}}
+})
 
-var Level107 = Level{Vials: []Vial{
+var Level107 = BuildLevel([]Vial{
 	{BGREEN, GRAY, ORANGE, YELLOW},
 	{RED, VIOLET, LGREEN, LBLUE},
 	{LGREEN, PINK, BGREEN, VIOLET},
@@ -49,7 +49,7 @@ var Level107 = Level{Vials: []Vial{
 	{RED, BROWN, DGREEN, DBLUE},
 	{AIR, AIR, AIR, AIR},
 	{AIR, AIR, AIR, AIR},
-}}
+})
 
 func main() {
 	shortest := true

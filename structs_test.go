@@ -109,11 +109,11 @@ func TestVial_PourInto(t *testing.T) {
 }
 
 func TestLevel_HashCode_DeepCopy(t *testing.T) {
-	var level = Level{Vials: []Vial{
+	var level = BuildLevel([]Vial{
 		{DBLUE, DGREEN, LBLUE, LBLUE},
 		{VIOLET, PINK, LGREEN, GRAY},
 		{ORANGE, VIOLET, RED, BROWN},
-	}}
+	})
 	levelHash := level.HashCode()
 	level.Vials[2][0] = RED
 	if level.HashCode() == levelHash {
@@ -131,28 +131,28 @@ func TestLevel_HashCode_DeepCopy(t *testing.T) {
 }
 
 func TestLevel_Solved(t *testing.T) {
-	var level = Level{Vials: []Vial{
+	var level = BuildLevel([]Vial{
 		{DBLUE, DGREEN, LBLUE, LBLUE},
 		{VIOLET, PINK, LGREEN, GRAY},
 		{AIR, AIR, RED, BROWN},
-	}}
+	})
 	if level.Solved() {
 		t.Fatal()
 	}
 
-	level = Level{Vials: []Vial{
+	level = BuildLevel([]Vial{
 		{DBLUE, DBLUE, DBLUE, DBLUE},
 		{AIR, AIR, AIR, VIOLET},
-	}}
+	})
 	if level.Solved() {
 		t.Fatal()
 	}
 
-	level = Level{Vials: []Vial{
+	level = BuildLevel([]Vial{
 		{DBLUE, DBLUE, DBLUE, DBLUE},
 		{VIOLET, VIOLET, VIOLET, VIOLET},
 		{AIR, AIR, AIR, AIR},
-	}}
+	})
 	if !level.Solved() {
 		t.Fatal()
 	}
