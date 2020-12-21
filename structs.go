@@ -94,7 +94,8 @@ func (v *Vial) SpaceLeft() (left int) {
 }
 
 func (v *Vial) CanPourInto(o *Vial) bool {
-	if o.Finished() {
+	oSpaceLeft := o.SpaceLeft()
+	if oSpaceLeft == 0 {
 		return false
 	}
 	vColor := v.TopColor()
@@ -105,7 +106,8 @@ func (v *Vial) CanPourInto(o *Vial) bool {
 	if vColor != oColor && oColor != AIR {
 		return false
 	}
-	return v.TopQty() <= o.SpaceLeft()
+	vTopQty := v.TopQty()
+	return vTopQty <= oSpaceLeft
 }
 
 func (v *Vial) PourInto(o *Vial) {
@@ -200,7 +202,7 @@ func (l *Level) Solved() bool {
 	return true
 }
 
-var hexes = []rune{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'}
+var hexes = []rune{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'}
 
 func (l *Level) String() string {
 	res := fmt.Sprintf("{s: %2d", l.Size)
