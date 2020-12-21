@@ -49,7 +49,7 @@ func (l *Level) solveRecurse(ss *SolvingState) (solution [][2]int) {
 	if ss.explored[hash] {
 		return NO_SOLUTION
 	}
-	ss.explored[hash] = true
+	ss.explored[hash] = true //XXX: might not be able to generate the best solution due to this
 	ss.moves++
 
 	if ss.depth > len(l.Vials)*5 {

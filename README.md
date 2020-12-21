@@ -12,7 +12,7 @@ Solution is a trivial exhaustive search, details:
 - relatively small data structure (56 bytes, L1 cache friendly)
 - no play-out will be tried twice, to avoid potential infinite loops and prune search space
 - avoids moving solved vials into empty vials (innocuous move)
-- reasonably fast about 1.45µs per move simulation (~675k moves/sec single-core), it will find instantly one solution; 
+- reasonably fast about 1.35µs per move simulation (~720k moves/sec single-core), it will find instantly one solution; 
   it can take a couple of minutes to find the shortest solution for some levels.
 
 Comments:
@@ -42,7 +42,7 @@ mega moves: 3m, t: 4s, p: 1.499µs/m, d: 45, ts: {s: 14 cccc 0bbb 6666 4444 005b
 [...]
 mega moves: 54m, t: 1m18s, p: 1.456µs/m, d: 48, ts: {s: 14 cccc 1111 0002 6666 bbbb 8888 aaaa 0000 0222 9999 7777 4444 5555 3333}
 mega moves: 55m, t: 1m20s, p: 1.464µs/m, d: 47, ts: {s: 14 cccc 3333 0002 0444 7777 6666 5555 aaaa 1111 9999 bbbb 2224 0000 8888}
-Solution took: 1m21.283429744s, exploring 55370061 moves, or 1.468µs/move, 675244 moves-per-second
+Solution took: 1m16.217403532s, exploring 55370061 moves, 1.376µs/move, 719091 mps (moves-per-second)
 Move  1:  5 -> 13
 Move  2:  6 -> 14
 Move  3:  6 -> 13
@@ -87,4 +87,4 @@ Move 41:  5 -> 11
 ```
 
 Changelog:
-- 2020/12/21: code cleanup, performance improved X2.6 (~4us to ~1.5us)
+- 2020/12/21: code cleanup, performance improved X2.9 (~4us to ~1.37us)
