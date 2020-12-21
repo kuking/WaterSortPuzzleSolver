@@ -82,22 +82,23 @@ func (v *Vial) TopQty() (qty int) { // perf
 }
 
 func (v *Vial) SpaceLeft() (left int) {
-	left = 0
-	for i := 0; i < 4; i++ {
+	for i := 3; i >= 0; i-- {
 		if v[i] == AIR {
-			left++
-		} else {
-			return
+			return i + 1
 		}
 	}
-	return
+	return 0
+}
+
+func (v *Vial) Empty() bool {
+	return v[3] == AIR
+}
+
+func (v *Vial) Full() bool {
+	return v[0] != AIR
 }
 
 func (v *Vial) CanPourInto(o *Vial) bool {
-	oSpaceLeft := o.SpaceLeft()
-	if oSpaceLeft == 0 {
-		return false
-	}
 	vColor := v.TopColor()
 	if vColor == AIR {
 		return false
@@ -107,6 +108,7 @@ func (v *Vial) CanPourInto(o *Vial) bool {
 		return false
 	}
 	vTopQty := v.TopQty()
+	oSpaceLeft := o.SpaceLeft()
 	return vTopQty <= oSpaceLeft
 }
 

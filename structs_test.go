@@ -52,6 +52,18 @@ func TestVial_SpaceLeft(t *testing.T) {
 	}
 }
 
+func TestVial_Empty(t *testing.T) {
+	if !EMPTY_VIAL.Empty() || HALF_RED_VIAL.Empty() || FULL_ORANGE_VIAL.Empty() || FULL_MIXDUPE_VIAL.Empty() {
+		t.Fail()
+	}
+}
+
+func TestVial_Full(t *testing.T) {
+	if EMPTY_VIAL.Full() || HALF_RED_VIAL.Full() || !FULL_ORANGE_VIAL.Full() || !FULL_MIXDUPE_VIAL.Full() {
+		t.Fail()
+	}
+}
+
 func TestVial_CanPourInto(t *testing.T) {
 	if EMPTY_VIAL.CanPourInto(&EMPTY_VIAL) || EMPTY_VIAL.CanPourInto(&HALF_RED_VIAL) {
 		t.Fatal()

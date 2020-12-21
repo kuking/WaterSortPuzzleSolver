@@ -22,7 +22,8 @@ func (l *Level) exploreMove(ss *SolvingState, i, j int) (solution *[][2]int) {
 	if !vialI.CanPourInto(&vialJ) {
 		return nil
 	}
-	innocuous := vialJ.SpaceLeft() == 4 && vialI.TopQty()+vialI.SpaceLeft() == 4
+	innocuous := vialJ.Empty() && vialI.TopQty()+vialI.SpaceLeft() == 4
+	// last expresion after && is proxy for 'there is only one color in vialI'
 	if innocuous {
 		return nil
 	}
@@ -66,34 +67,36 @@ func (l *Level) solveRecurse(ss *SolvingState) (solution [][2]int) {
 		}
 		runtime.GC()
 	}
-	var best *[][2]int
-
+	var best *[][2]int = nil
 	// optimisations
-	var finished = []bool{}
-	var topColor = []Color{}
+	var finished = make([]bool, l.Size)
+	var topColor = make([]Color, l.Size)
 	for i := 0; i < l.Size; i++ {
-		finished = append(finished, l.Vials[i].Finished())
-		topColor = append(topColor, l.Vials[i].TopColor())
+		finished[i] = l.Vials[i].Finished()
+		topColor[i] = l.Vials[i].TopColor()
 	}
-
 	for i := 0; i < l.Size; i++ {
 		for j := i + 1; j < l.Size; j++ {
 			// optimisation
-			if (topColor[i] == topColor[j] || topColor[i] == AIR || topColor[j] == AIR) && !finished[i] && !finished[j] {
-				// left->right: i->j
-				sol := l.exploreMove(ss, i, j)
-				if sol != nil && (best == nil || len(*best) > len(*sol)) {
-					best = sol
-				}
-				// right->left: j->i
-				sol = l.exploreMove(ss, j, i)
-				if sol != nil && (best == nil || len(*best) > len(*sol)) {
-					best = sol
-				}
-				// shall continue or is good enough?
-				if best != nil && (len(*best) == 1 || !ss.shortest) {
-					return *best
-				}
+			if topColor[i] != topColor[j] && topColor[i] != AIR && topColor[j] != AIR {
+				continue
+			}
+			if finished[i] || finished[j] {
+				continue
+			}
+			// left->right: i->j
+			sol := l.exploreMove(ss, i, j)
+			if sol != nil && (best == nil || len(*best) > len(*sol)) {
+				best = sol
+			}
+			// right->left: j->i
+			sol = l.exploreMove(ss, j, i)
+			if sol != nil && (best == nil || len(*best) > len(*sol)) {
+				best = sol
+			}
+			// shall continue or is good enough?
+			if best != nil && (len(*best) == 1 || !ss.shortest) {
+				return *best
 			}
 		}
 	}
@@ -120,7 +123,7 @@ func (l *Level) Solve(shortest bool, verbose bool) (solution [][2]int) {
 	solution = work.solveRecurse(&ss)
 	duration := time.Now().Sub(ss.t0)
 	if verbose {
-		fmt.Printf("Solution took: %v, exploring %v moves, or %v/move, %v moves-per-second\n",
+		fmt.Printf("Solution took: %v, exploring %v moves, %v/move, %v mps (moves-per-second)\n",
 			duration, ss.moves, duration/time.Duration(ss.moves), ss.moves/uint64(duration.Seconds()+1))
 
 	}
