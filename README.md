@@ -6,12 +6,14 @@ Solves Water Sort Puzzle games, you can find the game here:
 
 Download the game, it is fun if you like that sort of games. 
 
-Got stuck in level 105, so I am implementing a solver. 
+Got stuck in level 105, so I implemented a solver. 
 
 Solution is a trivial exhaustive search, details:
-- relatively small data structure (56 bytes, cache friendly)
+- relatively small data structure (56 bytes, L1 cache friendly)
 - no play-out will be tried twice, to avoid potential infinite loops and prune search space
-- avoids moving solved vials into empty vials
+- avoids moving solved vials into empty vials (innocuous move)
+- reasonably fast for v1, about 3µs per move (~350k moves/sec single-core), it will find instantly one solution; 
+  it can take a couple of minutes to find the shortest solution for some levels.
 
 Further improvements:
 - Don't move a vial with just one color into an empty one (it would end up being the same problem)
@@ -36,6 +38,7 @@ ok  	github.com/kukino/WaterSortPuzzleSolver	0.262s
 go build -o WSPZ
 ./WSPZ
 Solving Level 105
+Solution took: 27.920402ms, exploring 7730 moves, or 3.611µs/move
 Move  1:  2 -> 13
 Move  2:  3 -> 14
 Move  3:  3 -> 13

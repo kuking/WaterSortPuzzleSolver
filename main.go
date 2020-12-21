@@ -33,10 +33,28 @@ var Level106 = Level{Vials: []Vial{
 	{AIR, AIR, AIR, AIR},
 }}
 
+var Level107 = Level{Vials: []Vial{
+	{BGREEN, GRAY, ORANGE, YELLOW},
+	{RED, VIOLET, LGREEN, LBLUE},
+	{LGREEN, PINK, BGREEN, VIOLET},
+	{YELLOW, PINK, RED, BROWN},
+	{LGREEN, DBLUE, BROWN, VIOLET},
+	{LGREEN, GRAY, VIOLET, YELLOW},
+	{ORANGE, GRAY, LBLUE, DGREEN},
+
+	{RED, DGREEN, LBLUE, PINK},
+	{DBLUE, DBLUE, LBLUE, BGREEN},
+	{DGREEN, BROWN, PINK, ORANGE},
+	{GRAY, BGREEN, YELLOW, ORANGE},
+	{RED, BROWN, DGREEN, DBLUE},
+	{AIR, AIR, AIR, AIR},
+	{AIR, AIR, AIR, AIR},
+}}
+
 func main() {
 
-	fmt.Println("Solving Level 105")
-	sol := Level105.Solve(false)
+	fmt.Println("Solving Level 107")
+	sol := Level107.Solve(false, true)
 	for i, s := range sol {
 		fmt.Printf("Move %2d: %2d -> %2d\n", i+1, s[0]+1, s[1]+1)
 	}
