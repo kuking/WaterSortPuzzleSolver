@@ -120,8 +120,9 @@ func (l *Level) Solve(shortest bool, verbose bool) (solution [][2]int) {
 	solution = work.solveRecurse(&ss)
 	duration := time.Now().Sub(ss.t0)
 	if verbose {
-		fmt.Printf("Solution took: %v, exploring %v moves, or %v/move\n",
-			duration, ss.moves, duration/time.Duration(ss.moves))
+		fmt.Printf("Solution took: %v, exploring %v moves, or %v/move, %v moves-per-second\n",
+			duration, ss.moves, duration/time.Duration(ss.moves), ss.moves/uint64(duration.Seconds()+1))
+
 	}
 	return
 }

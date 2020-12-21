@@ -12,13 +12,12 @@ Solution is a trivial exhaustive search, details:
 - relatively small data structure (56 bytes, L1 cache friendly)
 - no play-out will be tried twice, to avoid potential infinite loops and prune search space
 - avoids moving solved vials into empty vials (innocuous move)
-- reasonably fast for v1, about 3µs per move (~350k moves/sec single-core), it will find instantly one solution; 
+- reasonably fast about 1.45µs per move simulation (~675k moves/sec single-core), it will find instantly one solution; 
   it can take a couple of minutes to find the shortest solution for some levels.
 
 Comments:
-- It can search the shortest solution, but it is usually not worth the extra time, it takes longer and the greedy
-  algorithm usually finds a similar solution with maybe one extra move.
-  
+- It can search the shortest solution, but it is usually not worth the extra time, the greedy algorithm usually finds
+  a similar solution with maybe one extra move.
   
 The game:
   
@@ -26,59 +25,66 @@ The game:
 
 
 ```shell script
+$ lscpu | grep "Model name"
+Model name:          AMD Ryzen 7 3800X 8-Core Processor
 $ make 
 go clean -testcache -cache
 rm -f WSPZ
 go test
 PASS
-ok  	github.com/kukino/WaterSortPuzzleSolver	0.262s
+ok  	github.com/kukino/WaterSortPuzzleSolver	0.002s
 go build -o WSPZ
 ./WSPZ
-Solving Level 105
-Solution took: 27.920402ms, exploring 7730 moves, or 3.611µs/move
-Move  1:  2 -> 13
-Move  2:  3 -> 14
-Move  3:  3 -> 13
-Move  4:  4 -> 14
-Move  5:  2 ->  4
-Move  6:  9 ->  2
-Move  7: 12 ->  2
-Move  8: 11 ->  9
-Move  9:  6 -> 11
-Move 10:  5 ->  6
-Move 11:  5 ->  3
-Move 12: 11 ->  5
-Move 13:  8 -> 11
-Move 14:  8 -> 13
-Move 15:  4 ->  8
-Move 16:  4 ->  3
-Move 17:  4 -> 14
-Move 18:  3 ->  4
-Move 19:  7 ->  3
-Move 20: 10 ->  3
-Move 21:  7 -> 13
-Move 22:  7 ->  4
-Move 23:  7 -> 11
-Move 24:  5 ->  7
-Move 25:  1 ->  5
-Move 26: 10 ->  7
-Move 27:  9 -> 10
-Move 28:  9 -> 12
-Move 29:  5 ->  9
-Move 30:  1 ->  5
-Move 31: 12 ->  1
-Move 32:  6 ->  5
-Move 33:  6 ->  3
-Move 34:  5 ->  6
-Move 35:  2 ->  5
-Move 36: 10 ->  2
-Move 37:  5 -> 10
-Move 38:  8 ->  5
-Move 39: 12 ->  5
-Move 40: 11 ->  8
-Move 41:  9 -> 11
-Move 42: 12 -> 14
+Solving Level 105, find shortest: true
+mega moves: 1m, t: 1s, p: 1.629µs/m, d: 46, ts: {s: 14 2222 7777 8888 0444 9999 5555 6666 bbbb cccc aaaa 0000 0004 1111 3333}
+mega moves: 2m, t: 3s, p: 1.552µs/m, d: 44, ts: {s: 14 00cc 7777 6666 3333 aaaa 8888 9999 00cc bbbb 5555 2222 0004 1111 0444}
+mega moves: 3m, t: 4s, p: 1.499µs/m, d: 45, ts: {s: 14 cccc 0bbb 6666 4444 005b aaaa 3333 0555 8888 9999 0000 7777 1111 2222}
+[...]
+mega moves: 54m, t: 1m18s, p: 1.456µs/m, d: 48, ts: {s: 14 cccc 1111 0002 6666 bbbb 8888 aaaa 0000 0222 9999 7777 4444 5555 3333}
+mega moves: 55m, t: 1m20s, p: 1.464µs/m, d: 47, ts: {s: 14 cccc 3333 0002 0444 7777 6666 5555 aaaa 1111 9999 bbbb 2224 0000 8888}
+Solution took: 1m21.283429744s, exploring 55370061 moves, or 1.468µs/move, 675244 moves-per-second
+Move  1:  5 -> 13
+Move  2:  6 -> 14
+Move  3:  6 -> 13
+Move  4:  7 ->  6
+Move  5: 10 ->  6
+Move  6: 10 -> 14
+Move  7: 11 -> 10
+Move  8: 11 -> 14
+Move  9:  8 -> 11
+Move 10:  7 ->  8
+Move 11:  7 ->  5
+Move 12:  7 -> 11
+Move 13:  2 ->  7
+Move 14:  8 ->  7
+Move 15:  2 ->  8
+Move 16:  9 ->  2
+Move 17: 12 ->  2
+Move 18:  9 -> 10
+Move 19:  9 -> 12
+Move 20:  1 ->  9
+Move 21:  1 -> 13
+Move 22: 12 ->  1
+Move 23:  8 -> 12
+Move 24: 11 ->  8
+Move 25:  9 -> 11
+Move 26: 12 ->  9
+Move 27:  3 -> 12
+Move 28:  3 ->  7
+Move 29:  4 -> 12
+Move 30:  4 ->  9
+Move 31:  3 ->  4
+Move 32:  6 ->  3
+Move 33:  6 -> 13
+Move 34:  4 ->  6
+Move 35: 12 ->  4
+Move 36:  2 -> 12
+Move 37: 10 ->  2
+Move 38:  5 ->  6
+Move 39:  5 -> 14
+Move 40: 10 -> 12
+Move 41:  5 -> 11
 ```
 
 Changelog:
-- 2020/12/21: code cleanup
+- 2020/12/21: code cleanup, performance improved X2.6 (~4us to ~1.5us)
