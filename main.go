@@ -52,6 +52,7 @@ var Level107 = BuildLevel([]Vial{
 })
 
 func main() {
+	InitialiseLevelBuffers(100)
 	shortest := true
 	fmt.Println("Solving Level 107, find shortest:", shortest)
 	sol := Level107.Solve(shortest, true)

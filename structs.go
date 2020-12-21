@@ -166,14 +166,29 @@ func BuildLevel(vials []Vial) (l Level) {
 	return
 }
 
-func (l *Level) DeepCopy() (copy *Level) {
-	copy = &Level{
-		Size: l.Size,
+var levelBuffers []*Level
+
+func InitialiseLevelBuffers(size int) {
+	levelBuffers = []*Level{}
+	for i := 0; i < size; i++ {
+		level := BuildLevel([]Vial{})
+		levelBuffers = append(levelBuffers, &level)
 	}
-	for i, vial := range l.Vials {
-		copy.Vials[i] = vial
+}
+
+func (l *Level) BufferedDeepCopy() (copy *Level) {
+	if len(levelBuffers) == 0 {
+		panic("I ran out of Level buffers")
 	}
+	copy = levelBuffers[0]
+	levelBuffers = levelBuffers[1:]
+	*copy = *l
 	return
+}
+
+func (l *Level) ReturnBuffer() {
+	l.Size = 0
+	levelBuffers = append(levelBuffers, l)
 }
 
 func (l *Level) Solved() bool {

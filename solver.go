@@ -26,7 +26,8 @@ func (l *Level) exploreMove(ss *SolvingState, i, j int) (solution *[][2]int) {
 	if innocuous {
 		return nil
 	}
-	work := l.DeepCopy()
+	work := l.BufferedDeepCopy()
+	defer work.ReturnBuffer()
 	thisSolution := [][2]int{{i, j}}
 	work.Vials[i].PourInto(&work.Vials[j])
 	if work.Solved() {
@@ -58,7 +59,7 @@ func (l *Level) solveRecurse(ss *SolvingState) (solution [][2]int) {
 			d := time.Now().Sub(ss.t0)
 			fmt.Printf("mega moves: %vm, t: %v, p: %v/m, d: %v, ts: %v\n",
 				ss.moves/1_000_000,
-				d.Truncate(time.Millisecond),
+				d.Truncate(time.Second),
 				(d / time.Duration(ss.moves)).Truncate(time.Nanosecond),
 				ss.depth,
 				l)
@@ -102,7 +103,8 @@ func (l *Level) Solve(shortest bool, verbose bool) (solution [][2]int) {
 		moves:    0,
 		depth:    0,
 	}
-	work := l.DeepCopy()
+	work := l.BufferedDeepCopy()
+	defer work.ReturnBuffer()
 	solution = work.solveRecurse(&ss)
 	duration := time.Now().Sub(ss.t0)
 	if verbose {

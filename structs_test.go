@@ -109,6 +109,8 @@ func TestVial_PourInto(t *testing.T) {
 }
 
 func TestLevel_HashCode_DeepCopy(t *testing.T) {
+	InitialiseLevelBuffers(10)
+
 	var level = BuildLevel([]Vial{
 		{DBLUE, DGREEN, LBLUE, LBLUE},
 		{VIOLET, PINK, LGREEN, GRAY},
@@ -120,7 +122,7 @@ func TestLevel_HashCode_DeepCopy(t *testing.T) {
 		t.Fatal()
 	}
 	levelHash = level.HashCode()
-	levelCopy := *level.DeepCopy()
+	levelCopy := *level.BufferedDeepCopy()
 	if levelHash != levelCopy.HashCode() {
 		t.Fatal()
 	}

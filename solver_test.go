@@ -5,6 +5,7 @@ import "testing"
 // I am not expecting to implement complex solving tests, but a couple just to verify it returns data in correct format
 func TestLevel_Solve(t *testing.T) {
 
+	InitialiseLevelBuffers(10)
 	var level = BuildLevel([]Vial{
 		{AIR, AIR, BROWN, BROWN},
 		{AIR, AIR, BROWN, BROWN},
@@ -32,7 +33,7 @@ var forBenchmark = BuildLevel([]Vial{
 })
 
 func BenchmarkLevel_Solve(b *testing.B) {
-
+	InitialiseLevelBuffers(100)
 	forBenchmark.Solve(true, false)
 
 }
