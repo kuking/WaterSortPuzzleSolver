@@ -8,23 +8,31 @@ import (
 
 var NO_SOLUTION = [][2]int{}
 
-func (l *Level) exploreMove(explored map[uint64]bool, shortest bool, verbose bool, deep int, i int, j int) (solution *[][2]int) {
-	vialI := l.Vials[i]
-	vialJ := l.Vials[j]
+type SolvingState struct {
+	t0       time.Time
+	shortest bool
+	verbose  bool
+	explored map[uint64]bool
+	moves    uint64
+	depth    int
+}
+
+func (l *Level) exploreMove(ss *SolvingState, i, j int) (solution *[][2]int) {
+	vialI, vialJ := l.Vials[i], l.Vials[j]
 	if !vialI.CanPourInto(&vialJ) {
 		return nil
 	}
-	innocuous := vialI.TopQty()+vialI.SpaceLeft() == 4 && vialJ.SpaceLeft() == 4
+	innocuous := vialJ.SpaceLeft() == 4 && vialI.TopQty()+vialI.SpaceLeft() == 4
 	if innocuous {
 		return nil
 	}
 	work := l.DeepCopy()
-	work.Vials[i].PourInto(&work.Vials[j])
 	thisSolution := [][2]int{{i, j}}
+	work.Vials[i].PourInto(&work.Vials[j])
 	if work.Solved() {
 		return &thisSolution
 	}
-	tailSolution := work.solveRecurse(explored, shortest, verbose, deep+1)
+	tailSolution := work.solveRecurse(ss)
 	if len(tailSolution) > 0 {
 		sol := append(thisSolution, tailSolution...)
 		return &sol
@@ -32,63 +40,67 @@ func (l *Level) exploreMove(explored map[uint64]bool, shortest bool, verbose boo
 	return nil
 }
 
-func (l *Level) solveRecurse(explored map[uint64]bool, shortest bool, verbose bool, deep int) (solution [][2]int) {
-	if explored[l.HashCode()] {
-		return NO_SOLUTION
-	} else {
-		explored[l.HashCode()] = true
-	}
-	if deep > 150 {
-		//fmt.Println("abort, too-deep", deep, l)
+func (l *Level) solveRecurse(ss *SolvingState) (solution [][2]int) {
+	hash := l.HashCode()
+	if ss.explored[hash] {
 		return NO_SOLUTION
 	}
+	ss.explored[hash] = true
+	ss.moves++
 
-	if len(explored)%1000000 == 0 {
-		if verbose {
-			fmt.Println("Explored playouts", len(explored), "deep", deep, "snapshot:", *l)
+	if ss.depth > 150 {
+		return NO_SOLUTION
+	}
+	if ss.moves%1000000 == 0 {
+		if ss.verbose {
+			d := time.Now().Sub(ss.t0)
+			fmt.Printf("Move: t: %v, p: %v, %v/m, d: %v, ts: %v\n", ss.moves, d, d/time.Duration(ss.moves), ss.depth, *l)
 		}
 		runtime.GC()
 	}
-
 	var best *[][2]int
-	for i, _ := range l.Vials {
-		for j, _ := range l.Vials {
-			if i < j {
-				// left->right: i->j
-				sol := l.exploreMove(explored, shortest, verbose, deep, i, j)
-				if sol != nil && (best == nil || len(*best) > len(*sol)) {
-					best = sol
-				}
-				// right->left: j->i
-				sol = l.exploreMove(explored, shortest, verbose, deep, j, i)
-				if sol != nil && (best == nil || len(*best) > len(*sol)) {
-					best = sol
-				}
+	for i := 0; i < len(l.Vials); i++ {
+		for j := i + 1; j < len(l.Vials); j++ {
+			// left->right: i->j
+			sol := l.exploreMove(ss, i, j)
+			if sol != nil && (best == nil || len(*best) > len(*sol)) {
+				best = sol
 			}
-			if best != nil && (len(*best) == 1 || !shortest) {
+			// right->left: j->i
+			sol = l.exploreMove(ss, j, i)
+			if sol != nil && (best == nil || len(*best) > len(*sol)) {
+				best = sol
+			}
+			// shall continue or is good enough?
+			if best != nil && (len(*best) == 1 || !ss.shortest) {
 				return *best
 			}
 		}
 	}
-
 	if best == nil {
 		return NO_SOLUTION
-	} else {
-		return *best
 	}
+	return *best
 }
 
 func (l *Level) Solve(shortest bool, verbose bool) (solution [][2]int) {
-	t0 := time.Now()
 	if !l.Valid() {
 		return NO_SOLUTION
 	}
+	ss := SolvingState{
+		t0:       time.Now(),
+		shortest: shortest,
+		verbose:  verbose,
+		explored: map[uint64]bool{},
+		moves:    0,
+		depth:    0,
+	}
 	work := l.DeepCopy()
-	var explored = map[uint64]bool{}
-	solution = work.solveRecurse(explored, shortest, verbose, 0)
-	duration := time.Now().Sub(t0)
+	solution = work.solveRecurse(&ss)
+	duration := time.Now().Sub(ss.t0)
 	if verbose {
-		fmt.Printf("Solution took: %v, exploring %v moves, or %v/move\n", duration, len(explored), duration/time.Duration(len(explored)))
+		fmt.Printf("Solution took: %v, exploring %v moves, or %v/move\n",
+			duration, ss.moves, duration/time.Duration(ss.moves))
 	}
 	return
 }

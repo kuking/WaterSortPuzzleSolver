@@ -16,3 +16,23 @@ func TestLevel_Solve(t *testing.T) {
 		t.Fatal()
 	}
 }
+
+var forBenchmark = Level{Vials: []Vial{
+	{VIOLET, RED, BGREEN, PINK},
+	{PINK, LGREEN, DBLUE, DBLUE},
+	{DBLUE, LBLUE, LBLUE, GRAY},
+	{PINK, LGREEN, BGREEN, LGREEN},
+	{GRAY, VIOLET, ORANGE, ORANGE},
+	{PINK, RED, ORANGE, LGREEN},
+	{RED, BGREEN, GRAY, GRAY},
+	{ORANGE, VIOLET, RED, BGREEN},
+	{VIOLET, DBLUE, LBLUE, LBLUE},
+	{AIR, AIR, AIR, AIR},
+	{AIR, AIR, AIR, AIR},
+}}
+
+func BenchmarkLevel_Solve(b *testing.B) {
+
+	forBenchmark.Solve(true, false)
+
+}

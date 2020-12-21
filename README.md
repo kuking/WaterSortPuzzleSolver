@@ -80,4 +80,5 @@ Move 41:  9 -> 11
 Move 42: 12 -> 14
 ```
 
-
+Changelog:
+- 2020/12/21: code cleanup

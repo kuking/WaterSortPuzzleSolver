@@ -47,7 +47,7 @@ func (v *Vial) Finished() bool {
 	if c0 == AIR {
 		return false
 	}
-	for i := 1; i < 4; i++ {
+	for i := 3; i >= 0; i-- {
 		if v[i] != c0 {
 			return false
 		}
@@ -64,7 +64,7 @@ func (v *Vial) TopColor() Color {
 	return AIR
 }
 
-func (v *Vial) TopQty() (qty int) {
+func (v *Vial) TopQty() (qty int) { // perf
 	c := v.TopColor()
 	if c == AIR {
 		return 0
