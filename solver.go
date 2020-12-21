@@ -67,21 +67,33 @@ func (l *Level) solveRecurse(ss *SolvingState) (solution [][2]int) {
 		runtime.GC()
 	}
 	var best *[][2]int
+
+	// optimisations
+	var finished = []bool{}
+	var topColor = []Color{}
+	for i := 0; i < l.Size; i++ {
+		finished = append(finished, l.Vials[i].Finished())
+		topColor = append(topColor, l.Vials[i].TopColor())
+	}
+
 	for i := 0; i < l.Size; i++ {
 		for j := i + 1; j < l.Size; j++ {
-			// left->right: i->j
-			sol := l.exploreMove(ss, i, j)
-			if sol != nil && (best == nil || len(*best) > len(*sol)) {
-				best = sol
-			}
-			// right->left: j->i
-			sol = l.exploreMove(ss, j, i)
-			if sol != nil && (best == nil || len(*best) > len(*sol)) {
-				best = sol
-			}
-			// shall continue or is good enough?
-			if best != nil && (len(*best) == 1 || !ss.shortest) {
-				return *best
+			// optimisation
+			if (topColor[i] == topColor[j] || topColor[i] == AIR || topColor[j] == AIR) && !finished[i] && !finished[j] {
+				// left->right: i->j
+				sol := l.exploreMove(ss, i, j)
+				if sol != nil && (best == nil || len(*best) > len(*sol)) {
+					best = sol
+				}
+				// right->left: j->i
+				sol = l.exploreMove(ss, j, i)
+				if sol != nil && (best == nil || len(*best) > len(*sol)) {
+					best = sol
+				}
+				// shall continue or is good enough?
+				if best != nil && (len(*best) == 1 || !ss.shortest) {
+					return *best
+				}
 			}
 		}
 	}
