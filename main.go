@@ -54,8 +54,8 @@ var Level107 = BuildLevel([]Vial{
 func main() {
 	InitialiseLevelBuffers(100)
 	shortest := true
-	fmt.Println("Solving Level 107, find shortest:", shortest)
-	sol := Level107.Solve(shortest, true)
+	fmt.Println("Solving Level 105, find shortest:", shortest)
+	sol := Level105.Solve(shortest, true)
 	for i, s := range sol {
 		fmt.Printf("Move %2d: %2d -> %2d\n", i+1, s[0]+1, s[1]+1)
 	}
