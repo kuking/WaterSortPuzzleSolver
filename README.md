@@ -9,12 +9,13 @@ Download the game, it is fun if you like that sort of games.
 Got stuck in level 105, so I am implementing a solver. 
 
 Solution is a trivial exhaustive search, details:
-- relatively small data structure (56 bytes)
+- relatively small data structure (56 bytes, cache friendly)
 - no play-out will be tried twice, to avoid potential infinite loops and prune search space
 - avoids moving solved vials into empty vials
 
 Further improvements:
 - Find the shortest solution
+- Don't move a vial with just one color into an empty one (it would end up being the same problem)
 
 ![](lvl105.jpg)
 

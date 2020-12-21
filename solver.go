@@ -7,6 +7,30 @@ import (
 
 var NO_SOLUTION = [][2]int{}
 
+func (l *Level) exploreMove(explored map[uint64]bool, deep int, i int, j int) (solution *[][2]int) {
+	vialI := l.Vials[i]
+	vialJ := l.Vials[j]
+	if !vialI.CanPourInto(&vialJ) {
+		return nil
+	}
+	innocuous := vialI.TopQty()+vialI.SpaceLeft() == 4 && vialJ.SpaceLeft() == 4
+	if innocuous {
+		return nil
+	}
+	work := l.DeepCopy()
+	work.Vials[i].PourInto(&work.Vials[j])
+	thisSolution := [][2]int{{i, j}}
+	if work.Solved() {
+		return &thisSolution
+	}
+	tailSolution := work.solveRecurse(explored, deep+1)
+	if len(tailSolution) > 0 {
+		sol := append(thisSolution, tailSolution...)
+		return &sol
+	}
+	return nil
+}
+
 func (l *Level) solveRecurse(explored map[uint64]bool, deep int) (solution [][2]int) {
 	if explored[l.HashCode()] {
 		return NO_SOLUTION
@@ -23,36 +47,18 @@ func (l *Level) solveRecurse(explored map[uint64]bool, deep int) (solution [][2]
 		runtime.GC()
 	}
 
-	for i, vialI := range l.Vials {
-		for j, vialJ := range l.Vials {
+	for i, _ := range l.Vials {
+		for j, _ := range l.Vials {
 			if i < j {
 				// left->right: i->j
-				// avoid pouring an full vial into an empty one
-				if !vialI.Finished() && vialI.CanPourInto(&vialJ) {
-					work := l.DeepCopy()
-					work.Vials[i].PourInto(&work.Vials[j])
-					thisSolution := [][2]int{{i, j}}
-					if work.Solved() {
-						return thisSolution
-					}
-					tailSolution := work.solveRecurse(explored, deep+1)
-					if len(tailSolution) > 0 {
-						return append(thisSolution, tailSolution...)
-					}
+				sol := l.exploreMove(explored, deep, i, j)
+				if sol != nil {
+					return *sol
 				}
-// dont move full into empty
 				// right->left: j->i
-				if !vialJ.Finished() && vialJ.CanPourInto(&vialI) {
-					work := l.DeepCopy()
-					work.Vials[j].PourInto(&work.Vials[i])
-					thisSolution := [][2]int{{j, i}}
-					if work.Solved() {
-						return thisSolution
-					}
-					tailSolution := work.solveRecurse(explored, deep+1)
-					if len(tailSolution) > 0 {
-						return append(thisSolution, tailSolution...)
-					}
+				sol = l.exploreMove(explored, deep, j, i)
+				if sol != nil {
+					return *sol
 				}
 			}
 		}

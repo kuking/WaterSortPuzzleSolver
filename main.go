@@ -19,6 +19,20 @@ var Level105 = Level{Vials: []Vial{
 	{AIR, AIR, AIR, AIR},
 }}
 
+var Level106 = Level{Vials: []Vial{
+	{VIOLET, RED, BGREEN, PINK},
+	{PINK, LGREEN, DBLUE, DBLUE},
+	{DBLUE, LBLUE, LBLUE, GRAY},
+	{PINK, LGREEN, BGREEN, LGREEN},
+	{GRAY, VIOLET, ORANGE, ORANGE},
+	{PINK, RED, ORANGE, LGREEN},
+	{RED, BGREEN, GRAY, GRAY},
+	{ORANGE, VIOLET, RED, BGREEN},
+	{VIOLET, DBLUE, LBLUE, LBLUE},
+	{AIR, AIR, AIR, AIR},
+	{AIR, AIR, AIR, AIR},
+}}
+
 func main() {
 
 	fmt.Println("Solving Level 105")
