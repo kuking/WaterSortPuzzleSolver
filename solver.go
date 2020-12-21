@@ -7,7 +7,7 @@ import (
 
 var NO_SOLUTION = [][2]int{}
 
-func (l *Level) exploreMove(explored map[uint64]bool, deep int, i int, j int) (solution *[][2]int) {
+func (l *Level) exploreMove(explored map[uint64]bool, shortest bool, deep int, i int, j int) (solution *[][2]int) {
 	vialI := l.Vials[i]
 	vialJ := l.Vials[j]
 	if !vialI.CanPourInto(&vialJ) {
@@ -23,7 +23,7 @@ func (l *Level) exploreMove(explored map[uint64]bool, deep int, i int, j int) (s
 	if work.Solved() {
 		return &thisSolution
 	}
-	tailSolution := work.solveRecurse(explored, deep+1)
+	tailSolution := work.solveRecurse(explored, shortest, deep+1)
 	if len(tailSolution) > 0 {
 		sol := append(thisSolution, tailSolution...)
 		return &sol
@@ -31,7 +31,7 @@ func (l *Level) exploreMove(explored map[uint64]bool, deep int, i int, j int) (s
 	return nil
 }
 
-func (l *Level) solveRecurse(explored map[uint64]bool, deep int) (solution [][2]int) {
+func (l *Level) solveRecurse(explored map[uint64]bool, shortest bool, deep int) (solution [][2]int) {
 	if explored[l.HashCode()] {
 		return NO_SOLUTION
 	} else {
@@ -47,30 +47,39 @@ func (l *Level) solveRecurse(explored map[uint64]bool, deep int) (solution [][2]
 		runtime.GC()
 	}
 
+	var best *[][2]int
 	for i, _ := range l.Vials {
 		for j, _ := range l.Vials {
 			if i < j {
 				// left->right: i->j
-				sol := l.exploreMove(explored, deep, i, j)
-				if sol != nil {
-					return *sol
+				sol := l.exploreMove(explored, shortest, deep, i, j)
+				if sol != nil && (best == nil || len(*best) > len(*sol)) {
+					best = sol
 				}
 				// right->left: j->i
-				sol = l.exploreMove(explored, deep, j, i)
-				if sol != nil {
-					return *sol
+				sol = l.exploreMove(explored, shortest, deep, j, i)
+				if sol != nil && (best == nil || len(*best) > len(*sol)) {
+					best = sol
 				}
+			}
+			if best != nil && (len(*best) == 1 || !shortest) {
+				return *best
 			}
 		}
 	}
-	return NO_SOLUTION
+
+	if best == nil {
+		return NO_SOLUTION
+	} else {
+		return *best
+	}
 }
 
-func (l *Level) Solve() (solution [][2]int) {
+func (l *Level) Solve(shortest bool) (solution [][2]int) {
 	if !l.Valid() {
 		return NO_SOLUTION
 	}
 	work := l.DeepCopy()
 	var explored = map[uint64]bool{}
-	return work.solveRecurse(explored, 0)
+	return work.solveRecurse(explored, shortest, 0)
 }

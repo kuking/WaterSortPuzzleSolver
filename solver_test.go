@@ -10,7 +10,7 @@ func TestLevel_Solve(t *testing.T) {
 		{AIR, AIR, BROWN, BROWN},
 	}}
 
-	sol := level.Solve()
+	sol := level.Solve(false)
 	if len(sol) != 1 ||
 		sol[0][0] != 0 || sol[0][1] != 1 { // pour vial 0 into vial 1
 		t.Fatal()

@@ -36,7 +36,7 @@ var Level106 = Level{Vials: []Vial{
 func main() {
 
 	fmt.Println("Solving Level 105")
-	sol := Level105.Solve()
+	sol := Level105.Solve(false)
 	for i, s := range sol {
 		fmt.Printf("Move %2d: %2d -> %2d\n", i+1, s[0]+1, s[1]+1)
 	}

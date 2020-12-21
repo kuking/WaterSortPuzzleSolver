@@ -14,15 +14,27 @@ Solution is a trivial exhaustive search, details:
 - avoids moving solved vials into empty vials
 
 Further improvements:
-- Find the shortest solution
 - Don't move a vial with just one color into an empty one (it would end up being the same problem)
 
+Comments:
+- It can search the shortest solution, but it is usually not worth the extra time, it takes longer and the greedy
+  algorithm usually finds a similar solution with maybe one extra move.
+  
+  
+The game:
+  
 ![](lvl105.jpg)
 
 
 ```shell script
-$ make run
-[...]
+$ make 
+go clean -testcache -cache
+rm -f WSPZ
+go test
+PASS
+ok  	github.com/kukino/WaterSortPuzzleSolver	0.262s
+go build -o WSPZ
+./WSPZ
 Solving Level 105
 Move  1:  2 -> 13
 Move  2:  3 -> 14
@@ -47,27 +59,25 @@ Move 20: 10 ->  3
 Move 21:  7 -> 13
 Move 22:  7 ->  4
 Move 23:  7 -> 11
-Move 24:  3 ->  7
-Move 25:  5 ->  3
-Move 26:  1 ->  5
-Move 27: 10 ->  3
-Move 28:  9 -> 10
-Move 29:  9 -> 12
-Move 30:  5 ->  9
-Move 31:  1 ->  5
-Move 32: 12 ->  1
-Move 33:  6 ->  5
-Move 34:  6 ->  7
-Move 35:  5 ->  6
-Move 36:  2 ->  5
-Move 37: 10 ->  2
-Move 38:  5 -> 10
-Move 39:  8 ->  5
-Move 40: 12 ->  5
-Move 41: 11 ->  8
-Move 42:  9 -> 11
-Move 43: 12 ->  9
-Move 44:  9 -> 14
+Move 24:  5 ->  7
+Move 25:  1 ->  5
+Move 26: 10 ->  7
+Move 27:  9 -> 10
+Move 28:  9 -> 12
+Move 29:  5 ->  9
+Move 30:  1 ->  5
+Move 31: 12 ->  1
+Move 32:  6 ->  5
+Move 33:  6 ->  3
+Move 34:  5 ->  6
+Move 35:  2 ->  5
+Move 36: 10 ->  2
+Move 37:  5 -> 10
+Move 38:  8 ->  5
+Move 39: 12 ->  5
+Move 40: 11 ->  8
+Move 41:  9 -> 11
+Move 42: 12 -> 14
 ```
 
 
