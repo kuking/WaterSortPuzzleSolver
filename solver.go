@@ -32,7 +32,9 @@ func (l *Level) exploreMove(ss *SolvingState, i, j int) (solution *[][2]int) {
 	if work.Solved() {
 		return &thisSolution
 	}
+	ss.depth++
 	tailSolution := work.solveRecurse(ss)
+	ss.depth--
 	if len(tailSolution) > 0 {
 		sol := append(thisSolution, tailSolution...)
 		return &sol
@@ -48,13 +50,18 @@ func (l *Level) solveRecurse(ss *SolvingState) (solution [][2]int) {
 	ss.explored[hash] = true
 	ss.moves++
 
-	if ss.depth > 150 {
+	if ss.depth > len(l.Vials)*5 {
 		return NO_SOLUTION
 	}
-	if ss.moves%1000000 == 0 {
+	if ss.moves%1_000_000 == 0 {
 		if ss.verbose {
 			d := time.Now().Sub(ss.t0)
-			fmt.Printf("Move: t: %v, p: %v, %v/m, d: %v, ts: %v\n", ss.moves, d, d/time.Duration(ss.moves), ss.depth, *l)
+			fmt.Printf("mega moves: %vm, t: %v, p: %v/m, d: %v, ts: %v\n",
+				ss.moves/1_000_000,
+				d.Truncate(time.Millisecond),
+				(d / time.Duration(ss.moves)).Truncate(time.Nanosecond),
+				ss.depth,
+				*l)
 		}
 		runtime.GC()
 	}
