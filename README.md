@@ -18,7 +18,8 @@ Solution is a trivial exhaustive search, details:
 Comments:
 - It can search the shortest solution, but it is usually not worth the extra time, the greedy algorithm usually finds
   a similar solution with maybe one extra move.
-  
+- At least Go 1.14 is required.
+ 
 The game:
   
 ![](lvl105.jpg)
