@@ -27,7 +27,7 @@ type Vial [4]Color
 
 type Level struct {
 	Size  int
-	Vials [20]Vial
+	Vials [14]Vial
 }
 
 func (v *Vial) Valid() bool {
@@ -81,6 +81,11 @@ func (v *Vial) TopQty() (qty int) { // perf
 	return
 }
 
+func (v *Vial) HasOnlyOneColour() bool {
+	return v.TopQty()+v.SpaceLeft() == 4
+
+}
+
 func (v *Vial) SpaceLeft() (left int) {
 	for i := 3; i >= 0; i-- {
 		if v[i] == AIR {
@@ -90,7 +95,7 @@ func (v *Vial) SpaceLeft() (left int) {
 	return 0
 }
 
-func (v *Vial) Empty() bool {
+func (v *Vial) IsEmpty() bool {
 	return v[3] == AIR
 }
 
@@ -104,12 +109,13 @@ func (v *Vial) CanPourInto(o *Vial) bool {
 		return false
 	}
 	oColor := o.TopColor()
-	if vColor != oColor && oColor != AIR {
+	if oColor == AIR {
+		return true
+	}
+	if vColor != oColor {
 		return false
 	}
-	vTopQty := v.TopQty()
-	oSpaceLeft := o.SpaceLeft()
-	return vTopQty <= oSpaceLeft
+	return v.TopQty() <= o.SpaceLeft()
 }
 
 func (v *Vial) PourInto(o *Vial) {
@@ -162,7 +168,7 @@ func (l *Level) HashCode() uint64 {
 func BuildLevel(vials []Vial) (l Level) {
 	l = Level{
 		Size:  len(vials),
-		Vials: [20]Vial{},
+		Vials: [14]Vial{},
 	}
 	for i, vial := range vials {
 		l.Vials[i] = vial

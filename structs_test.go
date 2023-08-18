@@ -53,7 +53,7 @@ func TestVial_SpaceLeft(t *testing.T) {
 }
 
 func TestVial_Empty(t *testing.T) {
-	if !EMPTY_VIAL.Empty() || HALF_RED_VIAL.Empty() || FULL_ORANGE_VIAL.Empty() || FULL_MIXDUPE_VIAL.Empty() {
+	if !EMPTY_VIAL.IsEmpty() || HALF_RED_VIAL.IsEmpty() || FULL_ORANGE_VIAL.IsEmpty() || FULL_MIXDUPE_VIAL.IsEmpty() {
 		t.Fail()
 	}
 }

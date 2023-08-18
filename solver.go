@@ -11,6 +11,7 @@ var NO_SOLUTION = [][2]int{}
 type SolvingState struct {
 	t0       time.Time
 	shortest bool
+	bestLen  int
 	verbose  bool
 	explored map[uint64]bool
 	moves    uint64
@@ -19,12 +20,13 @@ type SolvingState struct {
 
 func (l *Level) exploreMove(ss *SolvingState, i, j int) (solution *[][2]int) {
 	vialI, vialJ := l.Vials[i], l.Vials[j]
-	if !vialI.CanPourInto(&vialJ) {
+	if ss.depth > ss.bestLen { // Pruning
 		return nil
 	}
-	innocuous := vialJ.Empty() && vialI.TopQty()+vialI.SpaceLeft() == 4
-	// last expresion after && is proxy for 'there is only one color in vialI'
-	if innocuous {
+	if vialI.HasOnlyOneColour() && vialJ.IsEmpty() { // Pruning
+		return nil // skip, it would be an innocuous move
+	}
+	if !vialI.CanPourInto(&vialJ) {
 		return nil
 	}
 	work := l.BufferedDeepCopy()
@@ -39,6 +41,9 @@ func (l *Level) exploreMove(ss *SolvingState, i, j int) (solution *[][2]int) {
 	ss.depth--
 	if len(tailSolution) > 0 {
 		sol := append(thisSolution, tailSolution...)
+		if ss.depth+len(sol) < ss.bestLen {
+			ss.bestLen = ss.depth + len(sol)
+		}
 		return &sol
 	}
 	return nil
@@ -46,10 +51,10 @@ func (l *Level) exploreMove(ss *SolvingState, i, j int) (solution *[][2]int) {
 
 func (l *Level) solveRecurse(ss *SolvingState) (solution [][2]int) {
 	hash := l.HashCode()
-	if ss.explored[hash] {
+	if ss.explored[hash] { // Pruning
 		return NO_SOLUTION
 	}
-	ss.explored[hash] = true //XXX: might not be able to generate the best solution due to this
+	ss.explored[hash] = true
 	ss.moves++
 
 	if ss.depth > len(l.Vials)*5 {
@@ -58,30 +63,29 @@ func (l *Level) solveRecurse(ss *SolvingState) (solution [][2]int) {
 	if ss.moves%1_000_000 == 0 {
 		if ss.verbose {
 			d := time.Now().Sub(ss.t0)
-			fmt.Printf("mega moves: %vm, t: %v, p: %v/m, d: %v, ts: %v\n",
+			fmt.Printf("moves: %vm, t: %v, p: %v/m, d: %v, bl: %v, ts: %v\n",
 				ss.moves/1_000_000,
 				d.Truncate(time.Second),
 				(d / time.Duration(ss.moves)).Truncate(time.Nanosecond),
 				ss.depth,
+				ss.bestLen,
 				l)
 		}
 		runtime.GC()
 	}
 	var best *[][2]int = nil
-	// optimisations
-	var finished = make([]bool, l.Size)
-	var topColor = make([]Color, l.Size)
 	for i := 0; i < l.Size; i++ {
-		finished[i] = l.Vials[i].Finished()
-		topColor[i] = l.Vials[i].TopColor()
-	}
-	for i := 0; i < l.Size; i++ {
+		topColorI := l.Vials[i].TopColor()
+		if l.Vials[i].Finished() {
+			continue
+		}
 		for j := i + 1; j < l.Size; j++ {
-			// optimisation
-			if topColor[i] != topColor[j] && topColor[i] != AIR && topColor[j] != AIR {
+			topColorJ := l.Vials[j].TopColor()
+			if l.Vials[i].Finished() {
 				continue
 			}
-			if finished[i] || finished[j] {
+			// optimisation
+			if topColorI != topColorJ && topColorI != AIR && topColorJ != AIR {
 				continue
 			}
 			// left->right: i->j
@@ -113,6 +117,7 @@ func (l *Level) Solve(shortest bool, verbose bool) (solution [][2]int) {
 	ss := SolvingState{
 		t0:       time.Now(),
 		shortest: shortest,
+		bestLen:  1_000,
 		verbose:  verbose,
 		explored: map[uint64]bool{},
 		moves:    0,
@@ -124,7 +129,7 @@ func (l *Level) Solve(shortest bool, verbose bool) (solution [][2]int) {
 	duration := time.Now().Sub(ss.t0)
 	if verbose {
 		fmt.Printf("Solution took: %v, exploring %v moves, %v/move, %v mps (moves-per-second)\n",
-			duration, ss.moves, duration/time.Duration(ss.moves), ss.moves/uint64(duration.Seconds()+1))
+			duration.Truncate(time.Millisecond), ss.moves, duration/time.Duration(ss.moves), ss.moves/uint64(duration.Seconds()+1))
 
 	}
 	return
